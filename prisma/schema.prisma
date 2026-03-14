@@ -12,3 +12,113 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// Enum untuk role
+enum Role {
+  ADMIN
+  CAPTAIN
+}
+
+// Enum untuk status turnamen
+enum TournamentStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+model User {
+  id    String @id @default(cuid())
+  name  String
+  email String
+  role  Role   @default(CAPTAIN)
+
+  // Seorang kapten bisa memiliki 1 tim (opsional jika dia admin)
+  team Team?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id   String  @id @default(cuid())
+  name String  @unique
+  logo String?
+
+  captainId String @unique
+  captain   User   @relation(fields: [captainId], references: [id])
+
+  players Player[]
+
+  // Relasi. Tim ini ikut turnamen mana saja
+  tournaments Tournament[] @relation("TournamentTeams")
+
+  // Relasi ke pertandingan
+  matchesAsA Match[] @relation("TeamA")
+  matchesAsB Match[] @relation("TeamB")
+  matchesWon Match[] @relation("WinnerTeam")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Player {
+  id       String  @id @default(cuid())
+  nickname String
+  gameId   String
+  role     String?
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tournament {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  prizePool   String?
+  maxSlots    Int              @default(16)
+  status      TournamentStatus @default(UPCOMING)
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  teams   Team[]  @relation("TournamentTeams")
+  matches Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Match {
+  id String @id @default(cuid())
+
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  round       Int
+  matchNumber Int
+
+  teamAId String?
+  TeamA   Team?   @relation("TeamA", fields: [teamAId], references: [id])
+
+  teamBId String?
+  teamB   Team?   @relation("TeamB", fields: [teamBId], references: [id])
+
+  scoreA Int @default(0)
+  scoreB Int @default(0)
+
+  winnerId String?
+  winner   Team?   @relation("WinnerTeam", fields: [winnerId], references: [id])
+
+  // Relasi Self-Referenching
+  // Menentukan pertandingan selanjutnya jika tim menang di match ini
+  nextMatchId String?
+  nextMatch   Match?  @relation("BracketFlow", fields: [nextMatchId], references: [id])
+  prevMatches Match[] @relation("BracketFlow")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
