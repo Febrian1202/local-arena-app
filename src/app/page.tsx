@@ -1,5 +1,6 @@
 import HeroSection from "@/components/public/HeroSection";
 import TournamentCards from "@/components/public/TournamentCards";
+import BracketView from "@/components/public/BracketView";
 
 const Home = () => {
   return (
@@ -7,6 +8,7 @@ const Home = () => {
       {/* Hero Section */}
       <HeroSection />
       <TournamentCards />
+      <BracketView />
     </div>
   );
 };
