@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { inter, orbitron } from "@/lib/fonts";
-import Footer from "@/components/public/Footer";
 
 export const metadata: Metadata = {
   title: "Local Arena - Esports Manager",
@@ -19,10 +17,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${orbitron.variable} font-foreground bg-background antialiased`}
       >
-        <Navbar />
-
         <main className="min-h-screen">{children}</main>
-        <Footer />
       </body>
     </html>
   );
