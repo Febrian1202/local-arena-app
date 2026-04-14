@@ -31,7 +31,7 @@ export function handlePublicRoute(
   return null;
 }
 
-export function handledProtectedRoute(
+export function handleProtectedRoute(
   request: NextRequest,
   isAuth: boolean,
   userRole: UserRole | undefined,

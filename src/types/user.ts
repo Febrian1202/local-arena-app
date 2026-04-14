@@ -1,1 +1,3 @@
-export type UserRole = "ADMIN" | "CAPTAIN";
+import { Role } from "../../generated/prisma/client";
+
+export type UserRole = Role;

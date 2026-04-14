@@ -1,4 +1,5 @@
 import { NextAuthOptions } from "next-auth";
+import { UserRole } from "@/types/user";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
@@ -67,7 +68,7 @@ export const authOptions: NextAuthOptions = {
       // Expose data dari token ke session
       if (token) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = token.role as UserRole;
       }
       return session;
     },

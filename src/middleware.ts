@@ -3,7 +3,7 @@ import { getToken } from "next-auth/jwt";
 import { UserRole } from "./types/user";
 import {
   getRequiredRoles,
-  handledProtectedRoute,
+  handleProtectedRoute,
   handlePublicRoute,
   isPublicRoute,
 } from "./lib/middleware";
@@ -27,9 +27,15 @@ export async function middleware(request: NextRequest) {
 
   if (requiredRoles) {
     return (
-      handledProtectedRoute(request, isAuth, userRole, requiredRoles) ??
+      handleProtectedRoute(request, isAuth, userRole, requiredRoles) ??
       NextResponse.next()
     );
+  }
+
+  // Deny by default: Jika rute tidak terdaftar sebagai publik atau terproteksi dengan role,
+  // maka arahkan ke login (atau halaman unauthorized sesuai kebutuhan).
+  if (!isAuth) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();

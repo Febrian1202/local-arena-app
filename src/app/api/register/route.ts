@@ -7,9 +7,9 @@ export async function POST(req: Request) {
     const { name, email, password } = await req.json();
 
     // Validasi
-    if (!email || !password) {
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { error: "Email dan password wajib diisi!" },
+        { error: "Nama, email dan password wajib diisi!" },
         { status: 400 },
       );
     }
